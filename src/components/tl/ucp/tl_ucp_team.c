@@ -14,7 +14,7 @@
 #ifdef HAVE_DPU_OFFLOAD
 #include "dpu_offload_service_daemon.h"
 #include "dpu_offload_envvars.h"
-#include "allgatherv/allgatherv_offload_host.h"
+// #include "allgatherv/allgatherv_offload_host.h"
 #include "allgather/allgather_offload_host.h"
 
 ucc_status_t ucc_tl_ucp_team_offload_engine_init(ucc_tl_ucp_team_t *team);

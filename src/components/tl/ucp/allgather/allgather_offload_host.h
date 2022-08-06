@@ -15,7 +15,7 @@
 
 /* UCC_TL_UCP_ALLGATHER_DPU_DONE_AM_ID */
 static int
-dpu_done_am_cb(struct dpu_offload_ev_sys *ev_sys, execution_context_t *context,
+dpu_done_am_cb_z(struct dpu_offload_ev_sys *ev_sys, execution_context_t *context,
                struct am_header *hdr, size_t hdr_size, void *data,
                size_t data_len)
 {
@@ -58,7 +58,7 @@ static int register_allgather_host_notifications(dpu_offload_ev_sys_t *ev_sys)
 
     rc = event_channel_register(ev_sys,
                                 UCC_TL_UCP_ALLGATHER_DPU_DONE_AM_ID,
-                                dpu_done_am_cb);
+                                dpu_done_am_cb_z);
     if (rc) {
         ucs_error("event_channel_register failed for AM ID %d",
                   UCC_TL_UCP_ALLGATHER_DPU_DONE_AM_ID);

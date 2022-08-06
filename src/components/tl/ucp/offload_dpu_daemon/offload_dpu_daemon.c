@@ -13,7 +13,7 @@
 
 #include "dpu_offload_service_daemon.h"
 #include "dpu_offload_envvars.h"
-#include "../allgatherv/allgatherv_offload_dpu.h"
+// #include "../allgatherv/allgatherv_offload_dpu.h"
 #include "../allgather/allgather_offload_dpu.h"
 
 int main(int argc, char **argv)
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
     while (!EXECUTION_CONTEXT_DONE(service_server))
     {
         lib_progress(service_server);
-        progress_ops(service_server);
+        progress_ops_z(service_server);
     }
 
     ucs_info("%s: server done, finalizing...", argv[0]);

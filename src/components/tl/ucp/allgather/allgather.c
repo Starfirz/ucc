@@ -31,7 +31,7 @@ ucc_base_coll_alg_info_t
 
 /* calculate the true start address and length of the buffer */
 void
-get_buffer_range(ucc_coll_args_t *args, ucc_coll_buffer_info_t *info,
+get_buffer_range_z(ucc_coll_args_t *args, ucc_coll_buffer_info_t *info,
                  ucc_rank_t size, void **start, size_t *len)
 {
     size_t dt_size = ucc_dt_size(info->datatype);
@@ -62,7 +62,7 @@ get_buffer_range(ucc_coll_args_t *args, ucc_coll_buffer_info_t *info,
 
 /* register xgvmi memory key on the host side */
 ucc_status_t
-register_memh(ucc_tl_ucp_task_t *task, void *address, size_t length,
+register_memh_z(ucc_tl_ucp_task_t *task, void *address, size_t length,
               ucp_mem_h *memh)
 {
     ucc_tl_ucp_lib_t *lib        = TASK_LIB(task);
@@ -87,7 +87,7 @@ register_memh(ucc_tl_ucp_task_t *task, void *address, size_t length,
 }
 
 /* pack rkey buffer */
-ucc_status_t pack_rkey(ucc_tl_ucp_task_t *task, ucp_mem_h memh, void **rkey_buf,
+ucc_status_t pack_rkey_z(ucc_tl_ucp_task_t *task, ucp_mem_h memh, void **rkey_buf,
                        size_t *buf_size)
 {
     ucc_tl_ucp_lib_t *lib = TASK_LIB(task);
@@ -108,7 +108,7 @@ ucc_status_t pack_rkey(ucc_tl_ucp_task_t *task, ucp_mem_h memh, void **rkey_buf,
 
 /* calculate the size of allgather_offload_args_t data structure */
 size_t
-get_offload_args_packed_size(ucc_rank_t comm_size, size_t s_rkey_buf_size,
+get_offload_args_packed_size_z(ucc_rank_t comm_size, size_t s_rkey_buf_size,
                              size_t r_rkey_buf_size)
 {
     size_t total_size = 0;
@@ -149,7 +149,7 @@ pack_allgather_offload_args(ucc_tl_ucp_task_t *task, void *s_start,
 {
     ucc_tl_ucp_team_t *team = TASK_TEAM(task);
     ucc_coll_args_t   *args = &TASK_ARGS(task);
-    ucc_rank_t i, size = UCC_TL_TEAM_SIZE(team);
+    // ucc_rank_t i, size = UCC_TL_TEAM_SIZE(team);
     size_t total_size = 0;
     size_t r_dt_size = ucc_dt_size(args->dst.info.datatype);
 
@@ -283,17 +283,17 @@ ucc_status_t ucc_tl_ucp_allgather_offload_start(ucc_coll_task_t *coll_task)
     //接受缓冲区，和dst的缓冲区信息对应
     void *r_start = NULL;
     size_t r_len = 0;
-    get_buffer_range(args, &(args->dst.info), UCC_TL_TEAM_SIZE(team),
+    get_buffer_range_z(args, &(args->dst.info), UCC_TL_TEAM_SIZE(team),
                      &r_start, &r_len);
     //重新修改buffer的开始地址
     assert(args->dst.info.buffer == r_start);
 
     /* register xgvmi mkeys */
-    status = register_memh(task, s_start, s_len, &op->s_memh);
+    status = register_memh_z(task, s_start, s_len, &op->s_memh);
     if (status) {
         return UCC_ERR_NO_MEMORY;
     }
-    status = register_memh(task, r_start, r_len, &op->r_memh);
+    status = register_memh_z(task, r_start, r_len, &op->r_memh);
     if (status) {
         return UCC_ERR_NO_MEMORY;
     }
@@ -301,17 +301,17 @@ ucc_status_t ucc_tl_ucp_allgather_offload_start(ucc_coll_task_t *coll_task)
     /* pack rkey buffers */
     void *s_rkey_buf, *r_rkey_buf;
     size_t s_rkey_buf_len, r_rkey_buf_len;
-    status = pack_rkey(task, op->s_memh, &s_rkey_buf, &s_rkey_buf_len);
+    status = pack_rkey_z(task, op->s_memh, &s_rkey_buf, &s_rkey_buf_len);
     if (status) {
         return UCC_ERR_NO_MEMORY;
     }
-    status = pack_rkey(task, op->r_memh, &r_rkey_buf, &r_rkey_buf_len);
+    status = pack_rkey_z(task, op->r_memh, &r_rkey_buf, &r_rkey_buf_len);
     if (status) {
         return UCC_ERR_NO_MEMORY;
     }
 
     /* calculate buffer size for metadata to send to DPU */
-    size_t packed_size = get_offload_args_packed_size(
+    size_t packed_size = get_offload_args_packed_size_z(
             UCC_TL_TEAM_SIZE(team), s_rkey_buf_len, r_rkey_buf_len);
 
     /* get an event from event pool, allocate payload buffer */
@@ -347,7 +347,7 @@ ucc_status_t ucc_tl_ucp_allgather_offload_start(ucc_coll_task_t *coll_task)
 
 
     /* deliver local data */
-    int rank = UCC_TL_TEAM_RANK(team);
+    // int rank = UCC_TL_TEAM_RANK(team);
     // size_t r_displacement = ucc_coll_args_get_displacement(args,
     //                             args->dst.info_v.displacements, rank) *
     //                         ucc_dt_size(args->dst.info_v.datatype);
@@ -405,10 +405,10 @@ ucc_status_t ucc_tl_ucp_allgather_offload_init(ucc_base_coll_args_t *coll_args,
            
 #endif // HAVE_DPU_OFFLOAD
 
-ucc_status_t ucc_tl_ucp_allgather_ring_start(ucc_coll_task_t *task);
-ucc_status_t ucc_tl_ucp_allgather_ring_progress(ucc_coll_task_t *task);
+// ucc_status_t ucc_tl_ucp_allgather_ring_start(ucc_coll_task_t *task);
+// ucc_status_t ucc_tl_ucp_allgather_ring_progress(ucc_coll_task_t *task);
 
-ucc_status_t ucc_tl_ucp_allgather_init(ucc_tl_ucp_task_t *task)
+ucc_status_t ucc_tl_ucp_allgather_ring_init_common(ucc_tl_ucp_task_t *task)
 {
     if ((!UCC_DT_IS_PREDEFINED((TASK_ARGS(task)).dst.info.datatype)) ||
         (!UCC_IS_INPLACE(TASK_ARGS(task)) &&
@@ -419,5 +419,20 @@ ucc_status_t ucc_tl_ucp_allgather_init(ucc_tl_ucp_task_t *task)
 
     task->super.post     = ucc_tl_ucp_allgather_ring_start;
     task->super.progress = ucc_tl_ucp_allgather_ring_progress;
+
     return UCC_OK;
+}
+
+ucc_status_t ucc_tl_ucp_allgather_ring_init(ucc_base_coll_args_t *coll_args,
+                                             ucc_base_team_t      *team,
+                                             ucc_coll_task_t     **task_h)
+{
+    ucc_tl_ucp_task_t *task = ucc_tl_ucp_init_task(coll_args, team);
+    *task_h = &task->super;
+    return ucc_tl_ucp_allgather_ring_init_common(task);
+}
+
+ucc_status_t ucc_tl_ucp_allgather_init(ucc_tl_ucp_task_t *task)
+{
+    return ucc_tl_ucp_allgather_ring_init_common(task);
 }
