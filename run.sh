@@ -106,11 +106,11 @@ mpirun  -np ${NP} \
             -x UCX_HANDLE_ERRORS=bt,freeze \
         --mca coll_ucc_enable 1 \
         --mca coll_ucc_priority 100 \
-            -x UCC_TL_UCP_TUNE="allgatherv:256-inf:@${ALGO}" \
+            -x UCC_TL_UCP_TUNE="allgather:256-inf:@${ALGO}" \
             -x UCC_LOG_LEVEL=warn \
         -x OFFLOAD_CONFIG_FILE_PATH=${CONFIG} \
         -x DPU_OFFLOAD_DBG_VERBOSE=0 \
         -x PMIX_MCA_psec=native \
-        ${RDMA_DIR}/osu-micro-benchmarks/bin/osu_iallgatherv -f -m 256:
+        ${RDMA_DIR}/osu-micro-benchmarks/bin/osu_iallgather -f -m 256:
 
 dpu_stop_daemons "${DPULIST}"
