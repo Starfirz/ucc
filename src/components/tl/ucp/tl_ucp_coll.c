@@ -28,6 +28,7 @@ const char
         UCC_TL_UCP_REDUCE_SCATTER_DEFAULT_ALG_SELECT_STR
 #ifdef HAVE_DPU_OFFLOAD
        ,UCC_TL_UCP_ALLGATHERV_DEFAULT_ALG_SELECT_STR
+       ,UCC_TL_UCP_ALLGATHER_DEFAULT_ALG_SELECT_STR
 #endif // HAVE_DPU_OFFLOAD
     };
 
@@ -87,9 +88,12 @@ ucc_status_t ucc_tl_ucp_coll_init(ucc_base_coll_args_t *coll_args,
     case UCC_COLL_TYPE_ALLREDUCE:
         status = ucc_tl_ucp_allreduce_init(task);
         break;
+
+    // ALLGATHER_ZZ
     case UCC_COLL_TYPE_ALLGATHER:
-        status = ucc_tl_ucp_allgather_init(task);
+        status = ucc_tl_ucp_allgatherv_init(task);
         break;
+
     case UCC_COLL_TYPE_ALLGATHERV:
         status = ucc_tl_ucp_allgatherv_init(task);
         break;
@@ -117,6 +121,7 @@ ucc_status_t ucc_tl_ucp_coll_init(ucc_base_coll_args_t *coll_args,
     return status;
 }
 
+//从字符串到整形类型的id号，这个字符串从ucc_tl_ucp_alg_id_to_init的参数中获取
 static inline int alg_id_from_str(ucc_coll_type_t coll_type, const char *str)
 {
     switch (coll_type) {
@@ -130,7 +135,10 @@ static inline int alg_id_from_str(ucc_coll_type_t coll_type, const char *str)
         return ucc_tl_ucp_reduce_scatter_alg_from_str(str);
 #ifdef HAVE_DPU_OFFLOAD
     case UCC_COLL_TYPE_ALLGATHERV:
-        return ucc_tl_ucp_allgatherv_alg_from_str(str);
+        return ucc_tl_ucp_allgatherv_alg_from_str(str); //返回的是.h文件中枚举类型的id，0、1、2
+    case UCC_COLL_TYPE_ALLGATHER:
+        return ucc_tl_ucp_allgather_alg_from_str(str);  //判断是ring还是offload
+
 #endif // HAVE_DPU_OFFLOAD
     default:
         break;
@@ -144,6 +152,8 @@ ucc_status_t ucc_tl_ucp_alg_id_to_init(int alg_id, const char *alg_id_str,
                                        ucc_base_coll_init_fn_t *init)
 {
     ucc_status_t status = UCC_OK;
+
+    //根据coll_type以及一个字符串，获取id号，id号对应了ring或者offload
     if (alg_id_str) {
         alg_id = alg_id_from_str(coll_type, alg_id_str);
     }
@@ -212,6 +222,22 @@ ucc_status_t ucc_tl_ucp_alg_id_to_init(int alg_id, const char *alg_id_str,
             break;
         };
         break;
+
+    case UCC_COLL_TYPE_ALLGATHER:
+        switch (alg_id) {
+
+        case UCC_TL_UCP_ALLGATHER_ALG_RING:
+            *init = ucc_tl_ucp_allgather_ring_init;  
+            break;
+        case UCC_TL_UCP_ALLGATHER_ALG_OFFLOAD:
+            *init = ucc_tl_ucp_allgather_offload_init;  
+            break;
+        default:
+            status = UCC_ERR_INVALID_PARAM;
+            break;
+        };
+        break;
+
 #endif // HAVE_DPU_OFFLOAD
 
     default:

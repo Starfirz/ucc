@@ -55,6 +55,7 @@ ucc_status_t ucc_tl_ucp_allgatherv_offload_progress(ucc_coll_task_t *task);
 static inline int ucc_tl_ucp_allgatherv_alg_from_str(const char *str)
 {
     int i;
+
     for (i = 0; i < UCC_TL_UCP_ALLGATHERV_ALG_LAST; i++) {
         if (0 == strcasecmp(str, ucc_tl_ucp_allgatherv_algs[i].name)) {
             break;
