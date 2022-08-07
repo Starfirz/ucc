@@ -7,5 +7,4 @@ According to our implementation, under each message size, the client will send 1
 
 ------
 ## Performance results
-
-![image-20220805155846235](C:\Users\BurningOrange\AppData\Roaming\Typora\typora-user-images\image-20220805155846235.png)
+![image](https://user-images.githubusercontent.com/45323451/183280557-c22282c5-32ed-4bab-9e91-3a31297852aa.png)
