@@ -29,6 +29,7 @@ const char
 #ifdef HAVE_DPU_OFFLOAD
        ,UCC_TL_UCP_ALLGATHERV_DEFAULT_ALG_SELECT_STR
        ,UCC_TL_UCP_ALLGATHER_DEFAULT_ALG_SELECT_STR
+       ,UCC_TL_UCP_BCAST_DEFAULT_ALG_SELECT_STR
 #endif // HAVE_DPU_OFFLOAD
     };
 
@@ -89,7 +90,6 @@ ucc_status_t ucc_tl_ucp_coll_init(ucc_base_coll_args_t *coll_args,
         status = ucc_tl_ucp_allreduce_init(task);
         break;
 
-    // ALLGATHER_ZZ
     case UCC_COLL_TYPE_ALLGATHER:
         status = ucc_tl_ucp_allgatherv_init(task);
         break;
@@ -138,6 +138,8 @@ static inline int alg_id_from_str(ucc_coll_type_t coll_type, const char *str)
         return ucc_tl_ucp_allgatherv_alg_from_str(str); //返回的是.h文件中枚举类型的id，0、1、2
     case UCC_COLL_TYPE_ALLGATHER:
         return ucc_tl_ucp_allgather_alg_from_str(str);  //判断是ring还是offload
+    case UCC_COLL_TYPE_BCAST:
+        return ucc_tl_ucp_bcast_alg_from_str(str); 
 
 #endif // HAVE_DPU_OFFLOAD
     default:
@@ -172,19 +174,19 @@ ucc_status_t ucc_tl_ucp_alg_id_to_init(int alg_id, const char *alg_id_str,
             break;
         };
         break;
-    case UCC_COLL_TYPE_BCAST:
-        switch (alg_id) {
-        case UCC_TL_UCP_BCAST_ALG_KNOMIAL:
-            *init = ucc_tl_ucp_bcast_knomial_init;
-            break;
-        case UCC_TL_UCP_BCAST_ALG_SAG_KNOMIAL:
-            *init = ucc_tl_ucp_bcast_sag_knomial_init;
-            break;
-        default:
-           status = UCC_ERR_INVALID_PARAM;
-           break;
-        };
-        break;
+    // case UCC_COLL_TYPE_BCAST:
+    //     switch (alg_id) {
+    //     case UCC_TL_UCP_BCAST_ALG_KNOMIAL:
+    //         *init = ucc_tl_ucp_bcast_knomial_init;
+    //         break;
+    //     case UCC_TL_UCP_BCAST_ALG_SAG_KNOMIAL:
+    //         *init = ucc_tl_ucp_bcast_sag_knomial_init;
+    //         break;
+    //     default:
+    //        status = UCC_ERR_INVALID_PARAM;
+    //        break;
+    //     };
+    //     break;
     case UCC_COLL_TYPE_ALLTOALL:
         switch (alg_id) {
         case UCC_TL_UCP_ALLTOALL_ALG_PAIRWISE:
@@ -235,6 +237,23 @@ ucc_status_t ucc_tl_ucp_alg_id_to_init(int alg_id, const char *alg_id_str,
         default:
             status = UCC_ERR_INVALID_PARAM;
             break;
+        };
+        break;
+    
+    case UCC_COLL_TYPE_BCAST:
+        switch (alg_id) {
+        case UCC_TL_UCP_BCAST_ALG_KNOMIAL:
+            *init = ucc_tl_ucp_bcast_knomial_init;
+            break;
+        case UCC_TL_UCP_BCAST_ALG_SAG_KNOMIAL:
+            *init = ucc_tl_ucp_bcast_sag_knomial_init;
+            break;
+        case UCC_TL_UCP_BCAST_ALG_OFFLOAD:
+            *init = ucc_tl_ucp_bcast_offload_init;
+            break;
+        default:
+           status = UCC_ERR_INVALID_PARAM;
+           break;
         };
         break;
 

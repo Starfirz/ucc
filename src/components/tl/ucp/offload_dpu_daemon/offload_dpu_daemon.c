@@ -14,7 +14,8 @@
 #include "dpu_offload_service_daemon.h"
 #include "dpu_offload_envvars.h"
 // #include "../allgatherv/allgatherv_offload_dpu.h"
-#include "../allgather/allgather_offload_dpu.h"
+// #include "../allgather/allgather_offload_dpu.h"
+#include "../bcast/bcast_offload_dpu.h"
 
 int main(int argc, char **argv)
 {
@@ -34,7 +35,7 @@ int main(int argc, char **argv)
 
     /* register AM callbacks */
     ucs_info("Registering notification callbacks...");
-    rc = register_allgather_dpu_notifications(offload_engine);
+    rc = register_bcast_dpu_notifications(offload_engine);
     if (rc) {
         ucs_error("failed to register event notification callbacks");
         return EXIT_FAILURE;
