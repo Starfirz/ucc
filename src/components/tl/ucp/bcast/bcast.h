@@ -26,7 +26,7 @@ typedef struct bcast_host_coll {
     ucc_coll_task_t *coll_task;     /* collective task */
     int complete;                   /* completion flag */
     ucp_mem_h s_memh;               /* send memh */
-    // ucp_mem_h r_memh;               /* receive memh */
+    ucp_mem_h r_memh;               /* receive memh */
 } bcast_host_coll_t;
 
 /* active collectives running on the HOST */
