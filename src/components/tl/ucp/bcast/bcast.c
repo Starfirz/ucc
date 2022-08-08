@@ -241,17 +241,17 @@ ucc_status_t ucc_tl_ucp_bcast_offload_start(ucc_coll_task_t *coll_task)
     //接受缓冲区，和dst的缓冲区信息对应
     void *r_start = NULL;
     size_t r_len = 0;
-    get_buffer_range_z(args, &(args->dst.info), UCC_TL_TEAM_SIZE(team),
+    get_buffer_range_b(args, &(args->dst.info), UCC_TL_TEAM_SIZE(team),
                      &r_start, &r_len);
     //重新修改buffer的开始地址
     assert(args->dst.info.buffer == r_start);
 
     /* register xgvmi mkeys */
-    status = register_memh_z(task, s_start, s_len, &op->s_memh);
+    status = register_memh_b(task, s_start, s_len, &op->s_memh);
     if (status) {
         return UCC_ERR_NO_MEMORY;
     }
-    status = register_memh_z(task, r_start, r_len, &op->r_memh);
+    status = register_memh_b(task, r_start, r_len, &op->r_memh);
     if (status) {
         return UCC_ERR_NO_MEMORY;
     }
@@ -259,17 +259,17 @@ ucc_status_t ucc_tl_ucp_bcast_offload_start(ucc_coll_task_t *coll_task)
     /* pack rkey buffers */
     void *s_rkey_buf, *r_rkey_buf;
     size_t s_rkey_buf_len, r_rkey_buf_len;
-    status = pack_rkey_z(task, op->s_memh, &s_rkey_buf, &s_rkey_buf_len);
+    status = pack_rkey_b(task, op->s_memh, &s_rkey_buf, &s_rkey_buf_len);
     if (status) {
         return UCC_ERR_NO_MEMORY;
     }
-    status = pack_rkey_z(task, op->r_memh, &r_rkey_buf, &r_rkey_buf_len);
+    status = pack_rkey_b(task, op->r_memh, &r_rkey_buf, &r_rkey_buf_len);
     if (status) {
         return UCC_ERR_NO_MEMORY;
     }
 
     /* calculate buffer size for metadata to send to DPU */
-    size_t packed_size = get_offload_args_packed_size_z(
+    size_t packed_size = get_offload_args_packed_size_b(
             UCC_TL_TEAM_SIZE(team), s_rkey_buf_len, r_rkey_buf_len);
 
     /* get an event from event pool, allocate payload buffer */

@@ -132,7 +132,7 @@ typedef struct bcast_offload_dpu_done {
 typedef struct bcast_offload_coll {
     ucs_list_link_t               super;        /* op list item */
     ucs_status_t                  status;       /* op status */
-    bcast_offload_args_t      args;         /* coll args for this op */
+    bcast_offload_args_t          args;         /* coll args for this op */
     size_t                        s_rkey_len;   /* length of s_rkey_buf */
     void                         *s_rkey_buf;   /* s_rkey packed buffer */
     ucp_mem_h                     s_memh;       /* memh for send buffer */
