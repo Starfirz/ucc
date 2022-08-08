@@ -127,8 +127,8 @@ static inline int alg_id_from_str(ucc_coll_type_t coll_type, const char *str)
     switch (coll_type) {
     case UCC_COLL_TYPE_ALLREDUCE:
         return ucc_tl_ucp_allreduce_alg_from_str(str);
-    case UCC_COLL_TYPE_BCAST:
-        return ucc_tl_ucp_bcast_alg_from_str(str);
+    // case UCC_COLL_TYPE_BCAST:
+    //    return ucc_tl_ucp_bcast_alg_from_str(str);
     case UCC_COLL_TYPE_ALLTOALL:
         return ucc_tl_ucp_alltoall_alg_from_str(str);
     case UCC_COLL_TYPE_REDUCE_SCATTER:
